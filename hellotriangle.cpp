@@ -6,9 +6,14 @@
 int main()
 {
 	float vertices[] = {
-    -0.5f, -0.2f, 0.0f,
+    // 第一个三角形
+    0.5f, 0.5f, 0.0f,   // 右上角
+    0.5f, -0.5f, 0.0f,  // 右下角
+    -0.5f, 0.5f, 0.0f,  // 左上角
+     // 第二个三角形
      0.5f, -0.5f, 0.0f,
-     0.0f,  0.5f, 0.0f
+     -0.5f,-0.5f,0.0f,
+     -0.5f,0.5f,0.0f
 	};
 
     // 初始化glfw
@@ -110,21 +115,21 @@ int main()
     glDeleteShader(fragment_shader_id);
     // 使用glVertexAttribPointer告知OpenGL如何解析顶点数据
     // 第一个参数表明从0开始索引数据
-    // 第二个参数是顶点属性的大小，因为顶点4属性是vec3，由3个值组成，所以大小是3
+    // 第二个参数是顶点属性的大小，因为顶点属性是vec3，由3个值组成，所以大小是3
     // 第三个参数是数据类型
     // 不将数据标准化
     // 步长
     // 偏移量
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-    // 复制顶点数组到缓冲区供OpenGL使用 （先绑定再复制）
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    // 1.设置顶点属性指针
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // 2.使用着色器程序
-    glUseProgram(shaderProgram);
-    // 3.绘制物体
+    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+    //// 复制顶点数组到缓冲区供OpenGL使用 （先绑定再复制）
+    //glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    //// 1.设置顶点属性指针
+    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    //glEnableVertexAttribArray(0);
+    //// 2.使用着色器程序
+    //glUseProgram(shaderProgram);
+    //// 3.绘制物体
 
 
     // 创建一个VAO
@@ -141,13 +146,15 @@ int main()
     glEnableVertexAttribArray(0);
 
     glUseProgram(shaderProgram);
-    glBindVertexArray(VAO);
 
     while (!glfwWindowShouldClose(window))
     {
+        // 第一个参数是图元的类型
+        // 第二个参数顶点数组起始索引
+        // 第三个参数是绘制的顶点个数
         glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 4, 3);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-    glDrawArrays(GL_TRIANGLES, 0, 3);
 }
