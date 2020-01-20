@@ -5,16 +5,17 @@
 
 int main()
 {
-	float vertices[] = {
-    // 第一个三角形
-    0.5f, 0.5f, 0.0f,   // 右上角
-    0.5f, -0.5f, 0.0f,  // 右下角
-    -0.5f, 0.5f, 0.0f,  // 左上角
-     // 第二个三角形
-     0.5f, -0.5f, 0.0f,
-     -0.5f,-0.5f,0.0f,
-     -0.5f,0.5f,0.0f
-	};
+    float vertices[] = {
+        0.5f, 0.5f, 0.0f,   // 右上角
+        0.5f, -0.5f, 0.0f,  // 右下角
+        -0.5f, -0.5f, 0.0f, // 左下角
+        -0.5f, 0.5f, 0.0f   // 左上角
+    };
+
+    unsigned int indices[] = { // 索引从0开始
+        0, 1, 3,
+        1, 2 ,3
+    };
 
     // 初始化glfw
     glfwInit();
@@ -38,6 +39,12 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
+
+    // 创建索引缓冲对象
+    unsigned int EBO;
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // 顶点着色器对象的ID
     unsigned int VBO;
@@ -141,7 +148,10 @@ int main()
     // 2. 把顶点数组复制到缓冲区供OpenGL使用
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    // 3. 设置顶点属性指针
+    // 3. 复制我们的顶点数组到一个索引缓冲中，供OpenGL使用
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    // 4. 设置顶点属性指针
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FLOAT, 3 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
 
@@ -152,8 +162,9 @@ int main()
         // 第一个参数是图元的类型
         // 第二个参数顶点数组起始索引
         // 第三个参数是绘制的顶点个数
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawArrays(GL_TRIANGLES, 4, 3);
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glDrawArrays(GL_TRIANGLES, 4, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
